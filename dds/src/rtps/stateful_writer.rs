@@ -35,9 +35,26 @@ impl RtpsStatefulWriter {
             guid,
             changes: Vec::new(),
             matched_readers: Vec::new(),
-            heartbeat_period: Duration::from_millis(200),
+            // Phase 97.4 — default bumped 200 ms → 2000 ms. On
+            // zero-latency loopback (ThreadX-Linux) and slow
+            // cooperative single-thread runtimes the 200 ms cycle
+            // saturated the SEDP poll loop with AckNack-DATA
+            // ping-pong. 2 s gives the cooperative scheduler room
+            // to drain matched-reader bookkeeping between
+            // heartbeats. ROS 2 / Cyclone / FastDDS defaults are
+            // 1 s+ for the discovery writer, so this is in line
+            // with upstream.
+            heartbeat_period: Duration::from_millis(2000),
             data_max_size_serialized,
         }
+    }
+
+    /// Override the per-writer heartbeat period. Builder-style
+    /// (returns `&mut self`) so call-sites that already chain into
+    /// `add_matched_reader` etc. can stay one-line.
+    pub fn set_heartbeat_period(&mut self, period: Duration) -> &mut Self {
+        self.heartbeat_period = period;
+        self
     }
 
     pub fn guid(&self) -> Guid {
