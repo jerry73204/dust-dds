@@ -24,7 +24,15 @@ tracing = { version = "0.1", default-features = false, features = [
 	"attributes",
 ], optional = true }
 
-regex = { version = "1.11.2", default-features = false }
+# Phase 101.2 — `regex` dropped in favour of a hand-rolled fnmatch
+# matcher (`fnmatch_match` in `dcps/domain_participant.rs`). The
+# regex crate transitively depends on `regex-syntax` +
+# `regex-automata` + `aho-corasick`, all of which use
+# `alloc::sync::Arc` directly — gated behind
+# `#[cfg(target_has_atomic = "ptr")]` and unavailable on
+# CAS-poor RISC-V `imc` targets (ESP32-C3). Removing the dep
+# unblocks Phase 97.4.esp32-qemu and shrinks the build by
+# ~3 kLOC of transitive code.
 
 critical-section = { version = "1.2.0", default-features = false }
 

@@ -118,7 +118,6 @@ use core::{
     pin::{Pin, pin},
     task::Poll,
 };
-use regex::Regex;
 use tracing::info;
 
 const ENTITYID_SPDP_BUILTIN_PARTICIPANT_WRITER: EntityId =
@@ -3957,29 +3956,20 @@ where
             .partition
             .name
             .iter()
-            .filter_map(|n| Regex::new(&fnmatch_to_regex(n)).ok())
-            .any(|regex| {
-                publisher
-                    .qos
-                    .partition
-                    .name
-                    .iter()
-                    .any(|n| regex.is_match(n))
-            });
+            .any(|p| publisher.qos.partition.name.iter().any(|n| fnmatch_match(p, n)));
 
         let is_any_local_regex_matched_with_received_partition_qos = publisher
             .qos
             .partition
             .name
             .iter()
-            .filter_map(|n| Regex::new(&fnmatch_to_regex(n)).ok())
-            .any(|regex| {
+            .any(|p| {
                 discovered_reader_data
                     .dds_subscription_data
                     .partition
                     .name
                     .iter()
-                    .any(|n| regex.is_match(n))
+                    .any(|n| fnmatch_match(p, n))
             });
 
         let is_partition_matched = discovered_reader_data.dds_subscription_data.partition
@@ -4414,29 +4404,20 @@ where
             .partition
             .name
             .iter()
-            .filter_map(|n| Regex::new(&fnmatch_to_regex(n)).ok())
-            .any(|regex| {
-                subscriber
-                    .qos
-                    .partition
-                    .name
-                    .iter()
-                    .any(|n| regex.is_match(n))
-            });
+            .any(|p| subscriber.qos.partition.name.iter().any(|n| fnmatch_match(p, n)));
 
         let is_any_local_regex_matched_with_received_partition_qos = subscriber
             .qos
             .partition
             .name
             .iter()
-            .filter_map(|n| Regex::new(&fnmatch_to_regex(n)).ok())
-            .any(|regex| {
+            .any(|p| {
                 discovered_writer_data
                     .dds_publication_data
                     .partition
                     .name
                     .iter()
-                    .any(|n| regex.is_match(n))
+                    .any(|n| fnmatch_match(p, n))
             });
 
         let is_partition_matched = discovered_writer_data.dds_publication_data.partition
@@ -6787,93 +6768,233 @@ fn is_discovered_topic_consistent(
         && &topic_qos.ownership == topic_builtin_topic_data.ownership()
 }
 
-fn fnmatch_to_regex(pattern: &str) -> String {
-    fn flush_literal(out: &mut String, lit: &mut String) {
-        if !lit.is_empty() {
-            out.push_str(&regex::escape(lit));
-            lit.clear();
-        }
-    }
+/// Phase 101.2 — direct fnmatch matcher (no `regex` dep).
+///
+/// Returns `true` iff `candidate` matches `pattern` under fnmatch
+/// semantics (DDS Partition QoS):
+///
+/// * `*`     — zero or more arbitrary characters
+/// * `?`     — exactly one arbitrary character
+/// * `[abc]` — one of the listed characters
+/// * `[!ab]` / `[^ab]` — none of the listed characters
+/// * `\\X`   — literal `X` (escape)
+/// * any other character — literal match
+///
+/// Recursive, no allocation. The recursion depth is bounded by the
+/// pattern length and is fine for the small pattern strings (~32
+/// chars typical) DDS Partition QoS uses. Equivalent to the old
+/// `Regex::new(&fnmatch_to_regex(p)).is_match(s)` round-trip but
+/// without pulling in `regex` + `regex-syntax` + `regex-automata` +
+/// `aho-corasick` (~3 kLOC of transitive deps that also gate on
+/// `target_has_atomic = "ptr"`).
+pub(crate) fn fnmatch_match(pattern: &str, candidate: &str) -> bool {
+    fnmatch_match_inner(pattern.as_bytes(), candidate.as_bytes())
+}
 
-    let mut out = String::from("^");
-    let mut literal = String::new();
-    let mut chars = pattern.chars().peekable();
+fn fnmatch_match_inner(pat: &[u8], cand: &[u8]) -> bool {
+    let mut p = 0usize;
+    let mut c = 0usize;
+    // backtrack state for `*` — the position in `pat` just past the
+    // last `*` we've seen, and the position in `cand` we'd resume
+    // from if the current attempt fails.
+    let mut star_p: Option<usize> = None;
+    let mut star_c = 0usize;
 
-    while let Some(c) = chars.next() {
-        match c {
-            // backslash escapes next char literally
-            '\\' => {
-                if let Some(next) = chars.next() {
-                    literal.push(next);
-                } else {
-                    literal.push('\\');
-                }
-            }
-
-            // glob wildcards
-            '*' => {
-                flush_literal(&mut out, &mut literal);
-                out.push_str(".*");
-            }
-            '?' => {
-                flush_literal(&mut out, &mut literal);
-                out.push('.');
-            }
-
-            // character class
-            '[' => {
-                flush_literal(&mut out, &mut literal);
-
-                let mut class = String::from("[");
-                // handle fnmatch negation [!...] -> regex [^...]
-                if let Some(&next) = chars.peek() {
-                    if next == '!' {
-                        chars.next();
-                        class.push('^');
-                    } else if next == '^' {
-                        // treat ^ the same if user used it
-                        chars.next();
-                        class.push('^');
+    while c < cand.len() {
+        if p < pat.len() {
+            match pat[p] {
+                b'\\' if p + 1 < pat.len() => {
+                    if pat[p + 1] == cand[c] {
+                        p += 2;
+                        c += 1;
+                        continue;
                     }
                 }
-
-                let mut closed = false;
-                while let Some(ch) = chars.next() {
-                    class.push(ch);
-                    if ch == ']' {
-                        closed = true;
-                        break;
+                b'?' => {
+                    p += 1;
+                    c += 1;
+                    continue;
+                }
+                b'*' => {
+                    // Skip consecutive `*` — `**` ≡ `*`.
+                    while p < pat.len() && pat[p] == b'*' {
+                        p += 1;
                     }
-                    // preserve escaped chars inside class
-                    if ch == '\\' {
-                        if let Some(esc) = chars.next() {
-                            class.push(esc);
+                    if p == pat.len() {
+                        return true; // trailing `*` matches anything
+                    }
+                    star_p = Some(p);
+                    star_c = c;
+                    continue;
+                }
+                b'[' => {
+                    if let Some((matched, end)) = match_class(&pat[p..], cand[c]) {
+                        if matched {
+                            p += end;
+                            c += 1;
+                            continue;
+                        }
+                    } else {
+                        // unclosed `[` — treat as literal
+                        if pat[p] == cand[c] {
+                            p += 1;
+                            c += 1;
+                            continue;
                         }
                     }
                 }
-
-                if closed {
-                    out.push_str(&class);
-                } else {
-                    // unclosed '[' — treat as literal
-                    literal.push('[');
-                    literal.push_str(&class[1..]); // append rest as literal
+                lit => {
+                    if lit == cand[c] {
+                        p += 1;
+                        c += 1;
+                        continue;
+                    }
                 }
             }
+        }
 
-            '+' => {
-                flush_literal(&mut out, &mut literal);
-                out.push('+'); // regex plus (quantifier)
-            }
-
-            // default: accumulate literal characters (will be escaped when flushed)
-            other => literal.push(other),
+        // mismatch — backtrack to last `*` if available
+        if let Some(sp) = star_p {
+            p = sp;
+            star_c += 1;
+            c = star_c;
+        } else {
+            return false;
         }
     }
 
-    flush_literal(&mut out, &mut literal);
-    out.push('$');
-    out
+    // Ran out of candidate. Pattern matches iff every remaining char
+    // is `*` (zero-length suffix).
+    while p < pat.len() && pat[p] == b'*' {
+        p += 1;
+    }
+    p == pat.len()
+}
+
+/// Match a single character against a `[...]` class at the start of
+/// `pat`. Supports literal members, `\\X` escapes, and `a-z` ranges.
+/// Returns `Some((matched, end))` where `end` is the index just past
+/// the closing `]`, or `None` if the class is unclosed.
+fn match_class(pat: &[u8], ch: u8) -> Option<(bool, usize)> {
+    debug_assert_eq!(pat[0], b'[');
+    let mut i = 1;
+    let negate = matches!(pat.get(i), Some(b'!') | Some(b'^'));
+    if negate {
+        i += 1;
+    }
+    let mut found = false;
+    let mut closed_at: Option<usize> = None;
+    while i < pat.len() {
+        let b = pat[i];
+        if b == b']' && i > 1 + negate as usize {
+            closed_at = Some(i + 1);
+            break;
+        }
+        // Resolve the "current character" — possibly an escape.
+        let (cur, advance) = if b == b'\\' && i + 1 < pat.len() {
+            (pat[i + 1], 2)
+        } else {
+            (b, 1)
+        };
+        // Range form `cur-end` — only when followed by `-X` and `X` is
+        // not the closing `]` and not a stray `-` itself.
+        let is_range = i + advance < pat.len()
+            && pat[i + advance] == b'-'
+            && i + advance + 1 < pat.len()
+            && pat[i + advance + 1] != b']';
+        if is_range {
+            let end_byte = pat[i + advance + 1];
+            let (lo, hi) = if cur <= end_byte {
+                (cur, end_byte)
+            } else {
+                (end_byte, cur)
+            };
+            if ch >= lo && ch <= hi {
+                found = true;
+            }
+            i += advance + 2;
+        } else {
+            if cur == ch {
+                found = true;
+            }
+            i += advance;
+        }
+    }
+    closed_at.map(|end| (found ^ negate, end))
+}
+
+#[cfg(test)]
+mod fnmatch_tests {
+    use super::fnmatch_match as m;
+
+    #[test]
+    fn literal() {
+        assert!(m("abc", "abc"));
+        assert!(!m("abc", "abd"));
+    }
+
+    #[test]
+    fn star() {
+        assert!(m("*", ""));
+        assert!(m("*", "anything"));
+        assert!(m("a*c", "abc"));
+        assert!(m("a*c", "axxxc"));
+        assert!(m("a*c", "ac"));
+        assert!(!m("a*c", "abx"));
+        assert!(m("**", "anything"));
+    }
+
+    #[test]
+    fn question() {
+        assert!(m("?", "a"));
+        assert!(!m("?", ""));
+        assert!(!m("?", "ab"));
+        assert!(m("a?c", "abc"));
+    }
+
+    #[test]
+    fn class() {
+        assert!(m("[abc]", "a"));
+        assert!(m("[abc]", "b"));
+        assert!(!m("[abc]", "d"));
+        assert!(m("[!abc]", "d"));
+        assert!(!m("[!abc]", "a"));
+        assert!(m("[^abc]", "d"));
+    }
+
+    #[test]
+    fn escape() {
+        assert!(m("\\*", "*"));
+        assert!(!m("\\*", "x"));
+        assert!(m("\\?", "?"));
+    }
+
+    #[test]
+    fn class_range() {
+        assert!(m("[a-z]", "a"));
+        assert!(m("[a-z]", "m"));
+        assert!(m("[a-z]", "z"));
+        assert!(!m("[a-z]", "A"));
+        assert!(m("[A-Z]", "X"));
+        assert!(m("[0-9]", "5"));
+        assert!(!m("[0-9]", "x"));
+        // Mixed range + literal.
+        assert!(m("[a-z_]", "_"));
+        assert!(m("[a-z_]", "k"));
+        // Negated range.
+        assert!(!m("[!0-9]", "5"));
+        assert!(m("[!0-9]", "x"));
+    }
+
+    #[test]
+    fn dds_partition_examples() {
+        // Real-world DDS partition patterns.
+        assert!(m("Sensors.*", "Sensors.Lidar"));
+        assert!(m("Sensors.*", "Sensors."));
+        assert!(!m("Sensors.*", "Actuators.Motor"));
+        assert!(m("*", "Sensors.Lidar"));
+        assert!(m("Sensor[0-9]", "Sensor3"));
+    }
 }
 
 const BUILT_IN_TOPIC_NAME_LIST: [&str; 4] = [
