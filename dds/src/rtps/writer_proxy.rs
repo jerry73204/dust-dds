@@ -13,7 +13,8 @@ use crate::{
         types::{EntityId, Guid, Locator, ReliabilityKind, SequenceNumber},
     },
 };
-use alloc::{sync::Arc, vec::Vec};
+use alloc::{vec::Vec};
+use crate::sync::Arc;
 
 use core::cmp::max;
 

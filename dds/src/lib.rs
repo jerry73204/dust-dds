@@ -5,6 +5,31 @@
 
 extern crate alloc;
 
+// Phase 101.3 — `Arc` / `Weak` substitution module for CAS-poor
+// targets. When the `portable-atomic` Cargo feature is on, route
+// through `portable-atomic-util` so stdlib's
+// `target_has_atomic = "ptr"` gating doesn't bite. Off by default
+// — std/POSIX path stays on stdlib types with zero overhead. ABI
+// substitution is internal: zero `extern "C"` / `#[repr(C)]` /
+// `#[no_mangle]` crossings carry `Arc` (audit: nano-ros Phase
+// 101.1).
+//
+// All in-crate `use alloc::sync::{Arc, Weak};` sites should import
+// via `crate::sync::{Arc, Weak}` instead so the right flavour
+// flows through automatically. Consumers that surface
+// `Arc<[u8]>` across the public boundary
+// (`transport::interface::TransportParticipantFactory`,
+// `transport::types::CacheChange::data_value`) should also
+// `use dust_dds::sync::Arc` to keep both sides on the same flavour.
+pub mod sync {
+    //! `Arc` / `Weak` re-export controlled by the `portable-atomic`
+    //! Cargo feature. See Phase 101.3 note in `lib.rs` for context.
+    #[cfg(feature = "portable-atomic")]
+    pub use portable_atomic_util::{Arc, Weak};
+    #[cfg(not(feature = "portable-atomic"))]
+    pub use alloc::sync::{Arc, Weak};
+}
+
 // Phase 97.3.esp32-qemu — when the `tracing` Cargo feature is off
 // (e.g. `riscv32imc` ESP32-C3 builds where `tracing-core`'s
 // `core::sync::atomic::*::compare_exchange` calls won't compile),

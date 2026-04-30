@@ -36,6 +36,14 @@ tracing = { version = "0.1", default-features = false, features = [
 
 critical-section = { version = "1.2.0", default-features = false }
 
+# Phase 101.3 — `Arc` / `Weak` substitution for CAS-poor targets
+# (e.g. ESP32-C3 / `riscv32imc`). When the `portable-atomic` feature
+# is on, route through `portable-atomic-util` so stdlib's
+# `target_has_atomic = "ptr"` gating doesn't bite. Off by default —
+# the std/POSIX path stays on stdlib types with zero overhead.
+portable-atomic-util = { version = "0.2", default-features = false, features = ["alloc"], optional = true }
+portable-atomic = { version = "1", default-features = false, optional = true }
+
 [dev-dependencies]
 tokio = { version = "1", features = ["rt", "macros"] }
 criterion = { version = "0.3", features = ["html_reports"] }
@@ -64,6 +72,12 @@ std = ["critical-section/std"]
 # RISC-V `imc` target lacks the `A` extension to emit. Detach
 # `tracing` so atomic-CAS-poor targets can drop it.
 tracing = ["dep:tracing"]
+# Phase 101.3 — substitute `alloc::sync::{Arc, Weak}` for
+# `portable_atomic_util::{Arc, Weak}`. ABI-internal substitution
+# (audit confirmed zero FFI crossings — see Phase 101 doc 101.1).
+# Required on RISC-V `imc` / other targets where
+# `target_has_atomic = "ptr"` evaluates false at compile time.
+portable-atomic = ["dep:portable-atomic-util", "dep:portable-atomic"]
 
 [[bench]]
 name = "benchmark"

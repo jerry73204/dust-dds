@@ -1,5 +1,6 @@
 use crate::infrastructure::type_support::TypeSupport;
-use alloc::{sync::Arc, vec::Vec};
+use alloc::{vec::Vec};
+use crate::sync::Arc;
 
 pub type Octet = u8;
 pub type Short = i16;

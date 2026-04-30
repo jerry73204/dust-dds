@@ -33,9 +33,10 @@ use crate::{
 };
 use alloc::{
     string::{String, ToString},
-    sync::Arc,
     vec::Vec,
 };
+
+use crate::sync::Arc;
 
 /// Async version of [`DomainParticipant`](crate::domain::domain_participant::DomainParticipant).
 pub struct DomainParticipantAsync {

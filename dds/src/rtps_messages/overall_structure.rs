@@ -17,7 +17,8 @@ use super::{
         INFO_TS, NACK_FRAG, PAD, ProtocolId, SubmessageFlag, SubmessageKind,
     },
 };
-use alloc::{sync::Arc, vec::Vec};
+use alloc::{vec::Vec};
+use crate::sync::Arc;
 
 pub enum Endianness {
     BigEndian,

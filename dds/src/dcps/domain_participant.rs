@@ -109,10 +109,11 @@ use alloc::{
     collections::{BTreeSet, VecDeque},
     format,
     string::{String, ToString},
-    sync::Arc,
     vec,
     vec::Vec,
 };
+
+use crate::sync::Arc;
 use core::{
     future::{Future, poll_fn},
     pin::{Pin, pin},

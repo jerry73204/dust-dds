@@ -5,7 +5,8 @@ use core::{
     task::{Context, Poll, Waker},
 };
 
-use alloc::{collections::VecDeque, sync::Arc};
+use alloc::{collections::VecDeque};
+use crate::sync::Arc;
 
 use crate::infrastructure::error::DdsError;
 

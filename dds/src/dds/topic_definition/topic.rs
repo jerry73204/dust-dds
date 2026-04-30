@@ -12,7 +12,8 @@ use crate::{
     std_runtime::executor::block_on,
     xtypes::dynamic_type::DynamicType,
 };
-use alloc::{string::String, sync::Arc, vec::Vec};
+use alloc::{string::String, vec::Vec};
+use crate::sync::Arc;
 
 /// The [`Topic`] represents the fact that both publications and subscriptions are tied to a single data-type. Its attributes
 /// `type_name` defines a unique resulting type for the publication or the subscription. It has also a `name` that allows it to

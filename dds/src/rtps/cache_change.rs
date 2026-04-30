@@ -8,7 +8,8 @@ use crate::{
     },
     transport::types::{CacheChange, ChangeKind, EntityId, Guid, GuidPrefix},
 };
-use alloc::{sync::Arc, vec::Vec};
+use alloc::{vec::Vec};
+use crate::sync::Arc;
 
 pub const PID_KEY_HASH: ParameterId = 0x0070;
 pub const PID_STATUS_INFO: ParameterId = 0x0071;

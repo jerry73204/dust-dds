@@ -5,7 +5,8 @@ use super::{
     types::ParameterId,
 };
 use crate::transport::types::{Locator, SequenceNumber};
-use alloc::{sync::Arc, vec::Vec};
+use alloc::{vec::Vec};
+use crate::sync::Arc;
 use core::ops::Range;
 
 // This files shall only contain the types as listed in the DDS-RTPS Version 2.3
@@ -278,7 +279,11 @@ impl Parameter {
             return Err(RtpsMessageError::InvalidData);
         }
         let value = if parameter_id == PID_SENTINEL {
-            Arc::new([])
+            // Phase 101.3 — `portable_atomic_util::Arc::new([])` returns
+            // `Arc<[T; 0]>`, which doesn't unsize-coerce to `Arc<[T]>`
+            // the way `alloc::sync::Arc::new([])` does. Construct an
+            // explicit empty `Arc<[u8]>` via `Arc::from(&[][..])`.
+            Arc::from(&[][..])
         } else {
             if data.len() < length as usize {
                 return Err(RtpsMessageError::NotEnoughData);
@@ -423,7 +428,10 @@ impl Data {
 
 impl Default for Data {
     fn default() -> Self {
-        Self(Arc::new([]))
+        // Phase 101.3 — see comment on `submessage_elements.rs` PID_SENTINEL
+        // arm: explicit `Arc::from(&[][..])` is needed because
+        // `portable_atomic_util::Arc::new([])` does not unsize-coerce.
+        Self(Arc::from(&[][..]))
     }
 }
 

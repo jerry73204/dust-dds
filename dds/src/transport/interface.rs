@@ -1,5 +1,6 @@
 use crate::{dcps::channels::mpsc::MpscSender, transport::types::Locator};
-use alloc::{boxed::Box, sync::Arc, vec::Vec};
+use alloc::{boxed::Box, vec::Vec};
+use crate::sync::Arc;
 use core::{future::Future, pin::Pin};
 
 pub trait WriteMessage {

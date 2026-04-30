@@ -34,7 +34,8 @@ use crate::{
     transport::types::CacheChange,
     xtypes::dynamic_type::{DynamicData, DynamicType},
 };
-use alloc::{boxed::Box, string::String, sync::Arc, vec::Vec};
+use alloc::{boxed::Box, string::String, vec::Vec};
+use crate::sync::Arc;
 use core::{future::Future, pin::Pin};
 
 pub enum ParticipantServiceMail {

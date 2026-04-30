@@ -5,7 +5,8 @@ use core::{
     task::{Context, Poll, Waker},
 };
 
-use alloc::{string::String, sync::Arc};
+use alloc::{string::String};
+use crate::sync::Arc;
 use critical_section::Mutex;
 
 use crate::infrastructure::error::DdsError;
