@@ -54,7 +54,7 @@ impl Publisher {
     /// 2. Retrieve the default [`DataWriterQos`] qos by means of the [`Publisher::get_default_datawriter_qos`] operation.
     /// 3. Combine those two qos policies using the [`Publisher::copy_from_topic_qos`] and selectively modify policies as desired and
     /// use the resulting [`DataWriterQos`] to construct the [`DataWriter`].
-    #[tracing::instrument(skip(self, a_topic, a_listener))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, a_topic, a_listener)))]
     pub fn create_datawriter<Foo>(
         &self,
         a_topic: &TopicDescription,
@@ -77,7 +77,7 @@ impl Publisher {
     /// The deletion of the [`DataWriter`] will automatically unregister all instances. Depending on the settings of the
     /// [`WriterDataLifecycleQosPolicy`](crate::infrastructure::qos_policy::WriterDataLifecycleQosPolicy), the deletion of the
     /// [`DataWriter`].
-    #[tracing::instrument(skip(self, a_datawriter))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, a_datawriter)))]
     pub fn delete_datawriter<Foo>(&self, a_datawriter: &DataWriter<Foo>) -> DdsResult<()> {
         block_on(
             self.publisher_async
@@ -89,7 +89,7 @@ impl Publisher {
     /// `topic_name`. If no such [`DataWriter`] exists, the operation will succeed but return [`None`].
     /// If multiple [`DataWriter`] attached to the [`Publisher`] satisfy this condition, then the operation will return one of them. It is not
     /// specified which one.
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn lookup_datawriter<Foo>(&self, topic_name: &str) -> DdsResult<Option<DataWriter<Foo>>> {
         Ok(
             block_on(self.publisher_async.lookup_datawriter::<Foo>(topic_name))?
@@ -103,7 +103,7 @@ impl Publisher {
     /// The use of this operation must be matched by a corresponding call to [`Publisher::resume_publications`] indicating that the set of
     /// modifications has completed. If the [`Publisher`] is deleted before [`Publisher::resume_publications`] is called, any suspended updates yet to
     /// be published will be discarded.
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn suspend_publications(&self) -> DdsResult<()> {
         block_on(self.publisher_async.suspend_publications())
     }
@@ -113,7 +113,7 @@ impl Publisher {
     /// e.g., batch all the modifications made since the [`Publisher::suspend_publications`].
     /// The call to [`Publisher::resume_publications`] must match a previous call to [`Publisher::suspend_publications`] otherwise
     /// the operation will return [`DdsError::PreconditionNotMet`](crate::infrastructure::error::DdsError).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn resume_publications(&self) -> DdsResult<()> {
         block_on(self.publisher_async.resume_publications())
     }
@@ -134,14 +134,14 @@ impl Publisher {
     /// the values are inter-related (for example, if there are two data-instances representing the 'altitude' and 'velocity vector' of the
     /// same aircraft and both are changed, it may be useful to communicate those values in a way the reader can see both together;
     /// otherwise, it may e.g., erroneously interpret that the aircraft is on a collision course).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn begin_coherent_changes(&self) -> DdsResult<()> {
         block_on(self.publisher_async.begin_coherent_changes())
     }
 
     /// This operation terminates the *coherent set* initiated by the matching call to [`Publisher::begin_coherent_changes`]. If there is no matching
     /// call to [`Publisher::begin_coherent_changes`], the operation will return [`DdsError::PreconditionNotMet`](crate::infrastructure::error::DdsError).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn end_coherent_changes(&self) -> DdsResult<()> {
         block_on(self.publisher_async.end_coherent_changes())
     }
@@ -151,13 +151,13 @@ impl Publisher {
     /// the `max_wait` parameter elapses, whichever happens first. A return value of [`Ok`] indicates that all the samples written
     /// have been acknowledged by all reliable matched data readers; a return value of [`DdsError::Timeout`](crate::infrastructure::error::DdsError)
     /// indicates that `max_wait` elapsed before all the data was acknowledged.
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn wait_for_acknowledgments(&self, max_wait: Duration) -> DdsResult<()> {
         block_on(self.publisher_async.wait_for_acknowledgments(max_wait))
     }
 
     /// This operation returns the [`DomainParticipant`] to which the [`Publisher`] belongs.
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_participant(&self) -> DomainParticipant {
         DomainParticipant::new(self.publisher_async.get_participant())
     }
@@ -168,7 +168,7 @@ impl Publisher {
     /// contained entities is in a state where it cannot be deleted.
     /// Once this operation returns successfully, the application may delete the [`Publisher`] knowing that it has no
     /// contained [`DataWriter`] objects
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn delete_contained_entities(&self) -> DdsResult<()> {
         block_on(self.publisher_async.delete_contained_entities())
     }
@@ -179,7 +179,7 @@ impl Publisher {
     /// return [`DdsError::InconsistentPolicy`](crate::infrastructure::error::DdsError).
     /// The special value [`QosKind::Default`] may be passed to this operation to indicate that the default qos should be
     /// reset back to the initial values the factory would use, that is the default value of [`DataWriterQos`].
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn set_default_datawriter_qos(&self, qos: QosKind<DataWriterQos>) -> DdsResult<()> {
         block_on(self.publisher_async.set_default_datawriter_qos(qos))
     }
@@ -188,7 +188,7 @@ impl Publisher {
     /// [`DataWriter`] entities in the case where the qos policies are defaulted in the [`Publisher::create_datawriter`] operation.
     /// The values retrieved by this operation will match the set of values specified on the last successful call to
     /// [`Publisher::set_default_datawriter_qos`], or else, if the call was never made, the default values of [`DataWriterQos`].
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_default_datawriter_qos(&self) -> DdsResult<DataWriterQos> {
         block_on(self.publisher_async.get_default_datawriter_qos())
     }
@@ -199,7 +199,7 @@ impl Publisher {
     /// corresponding ones on the [`Topic`]. The resulting qos can then be used to create a new [`DataWriter`], or set its qos.
     /// This operation does not check the resulting `a_datawriter_qos` for consistency. This is because the merged `a_datawriter_qos`
     /// may not be the final one, as the application can still modify some policies prior to applying the policies to the [`DataWriter`].
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn copy_from_topic_qos(
         &self,
         _a_datawriter_qos: &mut DataWriterQos,
@@ -223,13 +223,13 @@ impl Publisher {
     /// The parameter `qos` can be set to [`QosKind::Default`] to indicate that the QoS of the Entity should be changed to match the current default QoS set in the Entity's factory.
     /// The operation [`Self::set_qos()`] cannot modify the immutable QoS so a successful return of the operation indicates that the mutable QoS for the Entity has been
     /// modified to match the current default for the Entity's factory.
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn set_qos(&self, qos: QosKind<PublisherQos>) -> DdsResult<()> {
         block_on(self.publisher_async.set_qos(qos))
     }
 
     /// This operation allows access to the existing set of [`PublisherQos`] policies.
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_qos(&self) -> DdsResult<PublisherQos> {
         block_on(self.publisher_async.get_qos())
     }
@@ -240,7 +240,7 @@ impl Publisher {
     /// Only one listener can be attached to each Entity. If a listener was already set, the operation [`Self::set_listener()`] will replace it with the
     /// new one. Consequently if the value [`None`] is passed for the listener parameter to the [`Self::set_listener()`] operation, any existing listener
     /// will be removed.
-    #[tracing::instrument(skip(self, a_listener))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, a_listener)))]
     pub fn set_listener(
         &self,
         a_listener: Option<impl PublisherListener + Send + 'static>,
@@ -255,7 +255,7 @@ impl Publisher {
     /// list returned by the [`Self::get_status_changes`] operation will be empty.
     /// The list of statuses returned by the [`Self::get_status_changes`] operation refers to the status that are triggered on the Entity itself
     /// and does not include statuses that apply to contained entities.
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_status_changes(&self) -> DdsResult<Vec<StatusKind>> {
         block_on(self.publisher_async.get_status_changes())
     }
@@ -280,13 +280,13 @@ impl Publisher {
     /// automatically enable all entities created from the factory.
     /// The Listeners associated with an entity are not called until the entity is enabled. Conditions associated with an entity that is not
     /// enabled are *inactive*, that is, the operation [`StatusCondition::get_trigger_value()`] will always return `false`.
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn enable(&self) -> DdsResult<()> {
         block_on(self.publisher_async.enable())
     }
 
     /// This operation returns the [`InstanceHandle`] that represents the Entity.
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_instance_handle(&self) -> InstanceHandle {
         block_on(self.publisher_async.get_instance_handle())
     }

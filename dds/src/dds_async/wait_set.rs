@@ -20,7 +20,7 @@ impl Clone for ConditionAsync {
 
 impl ConditionAsync {
     /// Async version of [`get_trigger_value`](crate::infrastructure::wait_set::Condition::get_trigger_value).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn get_trigger_value(&self) -> DdsResult<bool> {
         match self {
             ConditionAsync::StatusCondition(c) => c.get_trigger_value().await,
@@ -36,13 +36,13 @@ pub struct WaitSetAsync {
 
 impl WaitSetAsync {
     /// Create a new [`WaitSetAsync`]
-    #[tracing::instrument]
+    #[cfg_attr(feature = "tracing", tracing::instrument)]
     pub fn new() -> Self {
         Self::default()
     }
 
     /// Async version of [`wait`](crate::infrastructure::wait_set::WaitSet::wait).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn wait(&self) -> DdsResult<Vec<ConditionAsync>> {
         if self.conditions.is_empty() {
             return Err(DdsError::PreconditionNotMet(String::from(
@@ -90,20 +90,20 @@ impl WaitSetAsync {
     }
 
     /// Async version of [`attach_condition`](crate::infrastructure::wait_set::WaitSet::attach_condition).
-    #[tracing::instrument(skip(self, cond))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, cond)))]
     pub async fn attach_condition(&mut self, cond: ConditionAsync) -> DdsResult<()> {
         self.conditions.push(cond);
         Ok(())
     }
 
     /// Async version of [`detach_condition`](crate::infrastructure::wait_set::WaitSet::detach_condition).
-    #[tracing::instrument(skip(self, _cond))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, _cond)))]
     pub async fn detach_condition(&self, _cond: ConditionAsync) -> DdsResult<()> {
         todo!()
     }
 
     /// Async version of [`get_conditions`](crate::infrastructure::wait_set::WaitSet::get_conditions).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn get_conditions(&self) -> DdsResult<Vec<ConditionAsync>> {
         Ok(self.conditions.clone())
     }

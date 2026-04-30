@@ -204,7 +204,7 @@ impl<R: DdsRuntime> DomainParticipantFactoryAsync<R> {
 impl DomainParticipantFactoryAsync<crate::std_runtime::StdRuntime> {
     /// This operation returns the [`DomainParticipantFactoryAsync`] singleton. The operation is idempotent, that is, it can be called multiple
     /// times without side-effects and it will return the same [`DomainParticipantFactoryAsync`] instance.
-    #[tracing::instrument]
+    #[cfg_attr(feature = "tracing", tracing::instrument)]
     pub fn get_instance() -> &'static DomainParticipantFactoryAsync<crate::std_runtime::StdRuntime>
     {
         use core::net::IpAddr;

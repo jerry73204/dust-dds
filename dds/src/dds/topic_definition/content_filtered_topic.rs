@@ -55,19 +55,19 @@ impl ContentFilteredTopic {
 /// This implementation block represents the TopicDescription operations for the [`Topic`].
 impl ContentFilteredTopic {
     /// This operation returns the [`DomainParticipant`] to which the [`Topic`] belongs.
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_participant(&self) -> DomainParticipant {
         DomainParticipant::new(self.topic.get_participant())
     }
 
     /// The name of the type used to create the [`Topic`]
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_type_name(&self) -> String {
         self.topic.get_type_name()
     }
 
     /// The name used to create the [`Topic`]
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_name(&self) -> String {
         self.topic.get_name()
     }

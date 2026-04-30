@@ -18,7 +18,7 @@ pub struct DcpsDataReaderListener {
 }
 
 impl DcpsDataReaderListener {
-    #[tracing::instrument(skip(listener,))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(listener,)))]
     pub fn new<Foo>(mut listener: impl DataReaderListener<Foo> + Send + 'static) -> Self {
         let (sender, listener_receiver) = mpsc_channel();
         let task = Box::pin(async move {

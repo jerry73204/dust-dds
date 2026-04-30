@@ -86,7 +86,7 @@ impl<Foo> Clone for DataReaderAsync<Foo> {
 
 impl<Foo: TypeSupport> DataReaderAsync<Foo> {
     /// Async version of [`read`](crate::subscription::data_reader::DataReader::read).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn read(
         &self,
         max_samples: i32,
@@ -116,7 +116,7 @@ impl<Foo: TypeSupport> DataReaderAsync<Foo> {
     }
 
     /// Async version of [`take`](crate::subscription::data_reader::DataReader::take).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn take(
         &self,
         max_samples: i32,
@@ -146,7 +146,7 @@ impl<Foo: TypeSupport> DataReaderAsync<Foo> {
     }
 
     /// Async version of [`read_next_sample`](crate::subscription::data_reader::DataReader::read_next_sample).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn read_next_sample(&self) -> DdsResult<Sample<Foo>> {
         let (reply_sender, reply_receiver) = oneshot();
         self.participant_address()
@@ -167,7 +167,7 @@ impl<Foo: TypeSupport> DataReaderAsync<Foo> {
     }
 
     /// Async version of [`take_next_sample`](crate::subscription::data_reader::DataReader::take_next_sample).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn take_next_sample(&self) -> DdsResult<Sample<Foo>> {
         let (reply_sender, reply_receiver) = oneshot();
         self.participant_address()
@@ -188,7 +188,7 @@ impl<Foo: TypeSupport> DataReaderAsync<Foo> {
     }
 
     /// Async version of [`read_instance`](crate::subscription::data_reader::DataReader::read_instance).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn read_instance(
         &self,
         max_samples: i32,
@@ -218,7 +218,7 @@ impl<Foo: TypeSupport> DataReaderAsync<Foo> {
     }
 
     /// Async version of [`take_instance`](crate::subscription::data_reader::DataReader::take_instance).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn take_instance(
         &self,
         max_samples: i32,
@@ -249,7 +249,7 @@ impl<Foo: TypeSupport> DataReaderAsync<Foo> {
     }
 
     /// Async version of [`read_next_instance`](crate::subscription::data_reader::DataReader::read_next_instance).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn read_next_instance(
         &self,
         max_samples: i32,
@@ -281,7 +281,7 @@ impl<Foo: TypeSupport> DataReaderAsync<Foo> {
     }
 
     /// Async version of [`take_next_instance`](crate::subscription::data_reader::DataReader::take_next_instance).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn take_next_instance(
         &self,
         max_samples: i32,
@@ -313,7 +313,7 @@ impl<Foo: TypeSupport> DataReaderAsync<Foo> {
     }
 
     /// Async version of [`get_key_value`](crate::subscription::data_reader::DataReader::get_key_value).
-    #[tracing::instrument(skip(self, _key_holder))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, _key_holder)))]
     pub async fn get_key_value(
         &self,
         _key_holder: &mut Foo,
@@ -323,7 +323,7 @@ impl<Foo: TypeSupport> DataReaderAsync<Foo> {
     }
 
     /// Async version of [`lookup_instance`](crate::subscription::data_reader::DataReader::lookup_instance).
-    #[tracing::instrument(skip(self, _instance))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, _instance)))]
     pub async fn lookup_instance(&self, _instance: &Foo) -> DdsResult<Option<InstanceHandle>> {
         todo!()
     }
@@ -331,13 +331,13 @@ impl<Foo: TypeSupport> DataReaderAsync<Foo> {
 
 impl<Foo> DataReaderAsync<Foo> {
     /// Async version of [`get_liveliness_changed_status`](crate::subscription::data_reader::DataReader::get_liveliness_changed_status).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn get_liveliness_changed_status(&self) -> DdsResult<LivelinessChangedStatus> {
         todo!()
     }
 
     /// Async version of [`get_requested_deadline_missed_status`](crate::subscription::data_reader::DataReader::get_requested_deadline_missed_status).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn get_requested_deadline_missed_status(
         &self,
     ) -> DdsResult<RequestedDeadlineMissedStatus> {
@@ -345,7 +345,7 @@ impl<Foo> DataReaderAsync<Foo> {
     }
 
     /// Async version of [`get_requested_incompatible_qos_status`](crate::subscription::data_reader::DataReader::get_requested_incompatible_qos_status).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn get_requested_incompatible_qos_status(
         &self,
     ) -> DdsResult<RequestedIncompatibleQosStatus> {
@@ -353,19 +353,19 @@ impl<Foo> DataReaderAsync<Foo> {
     }
 
     /// Async version of [`get_sample_lost_status`](crate::subscription::data_reader::DataReader::get_sample_lost_status).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn get_sample_lost_status(&self) -> DdsResult<SampleLostStatus> {
         todo!()
     }
 
     /// Async version of [`get_sample_rejected_status`](crate::subscription::data_reader::DataReader::get_sample_rejected_status).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn get_sample_rejected_status(&self) -> DdsResult<SampleRejectedStatus> {
         todo!()
     }
 
     /// Async version of [`get_subscription_matched_status`](crate::subscription::data_reader::DataReader::get_subscription_matched_status).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn get_subscription_matched_status(&self) -> DdsResult<SubscriptionMatchedStatus> {
         let (reply_sender, reply_receiver) = oneshot();
         self.participant_address()
@@ -381,19 +381,19 @@ impl<Foo> DataReaderAsync<Foo> {
     }
 
     /// Async version of [`get_topicdescription`](crate::subscription::data_reader::DataReader::get_topicdescription).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_topicdescription(&self) -> TopicDescriptionAsync {
         self.topic.clone()
     }
 
     /// Async version of [`get_subscriber`](crate::subscription::data_reader::DataReader::get_subscriber).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_subscriber(&self) -> SubscriberAsync {
         self.subscriber.clone()
     }
 
     /// Async version of [`wait_for_historical_data`](crate::subscription::data_reader::DataReader::wait_for_historical_data).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn wait_for_historical_data(&self, max_wait: Duration) -> DdsResult<()> {
         let (reply_sender, reply_receiver) = oneshot();
         self.participant_address()
@@ -411,7 +411,7 @@ impl<Foo> DataReaderAsync<Foo> {
     }
 
     /// Async version of [`get_matched_publication_data`](crate::subscription::data_reader::DataReader::get_matched_publication_data).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn get_matched_publication_data(
         &self,
         publication_handle: InstanceHandle,
@@ -432,7 +432,7 @@ impl<Foo> DataReaderAsync<Foo> {
     }
 
     /// Async version of [`get_matched_publications`](crate::subscription::data_reader::DataReader::get_matched_publications).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn get_matched_publications(&self) -> DdsResult<Vec<InstanceHandle>> {
         let (reply_sender, reply_receiver) = oneshot();
         self.participant_address()
@@ -467,7 +467,7 @@ impl<Foo> DataReaderAsync<Foo> {
     }
 
     /// Async version of [`get_qos`](crate::subscription::data_reader::DataReader::get_qos).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn get_qos(&self) -> DdsResult<DataReaderQos> {
         let (reply_sender, reply_receiver) = oneshot();
         self.participant_address()
@@ -483,19 +483,19 @@ impl<Foo> DataReaderAsync<Foo> {
     }
 
     /// Async version of [`get_statuscondition`](crate::subscription::data_reader::DataReader::get_statuscondition).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_statuscondition(&self) -> StatusConditionAsync {
         StatusConditionAsync::new(self.status_condition_address.clone())
     }
 
     /// Async version of [`get_status_changes`](crate::subscription::data_reader::DataReader::get_status_changes).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn get_status_changes(&self) -> DdsResult<Vec<StatusKind>> {
         todo!()
     }
 
     /// Async version of [`enable`](crate::subscription::data_reader::DataReader::enable).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn enable(&self) -> DdsResult<()> {
         let (reply_sender, reply_receiver) = oneshot();
         self.participant_address()
@@ -512,7 +512,7 @@ impl<Foo> DataReaderAsync<Foo> {
     }
 
     /// Async version of [`get_instance_handle`](crate::subscription::data_reader::DataReader::get_instance_handle).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn get_instance_handle(&self) -> InstanceHandle {
         self.handle
     }
@@ -520,7 +520,7 @@ impl<Foo> DataReaderAsync<Foo> {
 
 impl<Foo> DataReaderAsync<Foo> {
     /// Async version of [`set_listener`](crate::subscription::data_reader::DataReader::set_listener).
-    #[tracing::instrument(skip(self, a_listener))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, a_listener)))]
     pub async fn set_listener(
         &self,
         a_listener: Option<impl DataReaderListener<Foo> + Send + 'static>,

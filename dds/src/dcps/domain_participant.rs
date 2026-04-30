@@ -874,7 +874,7 @@ where
         &self.domain_participant.builtin_subscriber.status_condition
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn get_inconsistent_topic_status(
         &mut self,
         topic_name: String,
@@ -899,7 +899,7 @@ where
         Ok(status)
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn set_topic_qos(
         &mut self,
         topic_name: String,
@@ -936,7 +936,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_topic_qos(&mut self, topic_name: String) -> DdsResult<TopicQos> {
         let Some(TopicDescriptionKind::Topic(topic)) = self
             .domain_participant
@@ -950,7 +950,7 @@ where
         Ok(topic.qos.clone())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn enable_topic(
         &mut self,
         topic_name: String,
@@ -973,7 +973,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_type_support(&mut self, topic_name: String) -> DdsResult<Arc<DynamicType>> {
         let Some(TopicDescriptionKind::Topic(topic)) = self
             .domain_participant
@@ -986,7 +986,7 @@ where
         Ok(topic.type_support.clone())
     }
 
-    #[tracing::instrument(skip(self, dcps_listener))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, dcps_listener)))]
     pub fn create_user_defined_publisher(
         &mut self,
         qos: QosKind<PublisherQos>,
@@ -1044,7 +1044,7 @@ where
         Ok(publisher_handle)
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn delete_user_defined_publisher(
         &mut self,
         participant_handle: InstanceHandle,
@@ -1076,7 +1076,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self, dcps_listener))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, dcps_listener)))]
     pub fn create_user_defined_subscriber(
         &mut self,
         qos: QosKind<SubscriberQos>,
@@ -1140,7 +1140,7 @@ where
         Ok((subscriber_handle, subscriber_status_condition_address))
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn delete_user_defined_subscriber(
         &mut self,
         participant_handle: InstanceHandle,
@@ -1177,7 +1177,7 @@ where
     }
 
     #[allow(clippy::too_many_arguments)]
-    #[tracing::instrument(skip(self, dcps_listener, type_support))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, dcps_listener, type_support)))]
     pub async fn create_topic(
         &mut self,
         topic_name: String,
@@ -1256,7 +1256,7 @@ where
         Ok((topic_handle, topic_status_condition_address))
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn delete_user_defined_topic(
         &mut self,
         participant_handle: InstanceHandle,
@@ -1294,7 +1294,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn create_content_filtered_topic(
         &mut self,
         participant_handle: InstanceHandle,
@@ -1347,7 +1347,7 @@ where
         Ok(topic_handle)
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn delete_content_filtered_topic(
         &mut self,
         participant_handle: InstanceHandle,
@@ -1357,7 +1357,7 @@ where
     }
 
     #[allow(clippy::type_complexity)]
-    #[tracing::instrument(skip(self, type_support))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, type_support)))]
     pub fn find_topic(
         &mut self,
         topic_name: String,
@@ -1453,7 +1453,7 @@ where
     }
 
     #[allow(clippy::type_complexity)]
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn lookup_topicdescription(
         &mut self,
         topic_name: String,
@@ -1475,7 +1475,7 @@ where
     }
 
     /// Ignore participant with the specified [`handle`](InstanceHandle).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn ignore_participant(&mut self, handle: InstanceHandle) -> DdsResult<()> {
         // Check enabled
         if !self.domain_participant.enabled {
@@ -1494,7 +1494,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn ignore_publication(&mut self, handle: InstanceHandle) -> DdsResult<()> {
         if !self.domain_participant.enabled {
             return Err(DdsError::NotEnabled);
@@ -1504,7 +1504,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn ignore_subscription(&mut self, handle: InstanceHandle) -> DdsResult<()> {
         if !self.domain_participant.enabled {
             return Err(DdsError::NotEnabled);
@@ -1514,7 +1514,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn delete_participant_contained_entities(&mut self) -> DdsResult<()> {
         let deleted_publisher_list: Vec<PublisherEntity> = self
             .domain_participant
@@ -1545,7 +1545,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn set_default_publisher_qos(&mut self, qos: QosKind<PublisherQos>) -> DdsResult<()> {
         let qos = match qos {
             QosKind::Default => PublisherQos::default(),
@@ -1556,12 +1556,12 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_default_publisher_qos(&mut self) -> DdsResult<PublisherQos> {
         Ok(self.domain_participant.default_publisher_qos.clone())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn set_default_subscriber_qos(&mut self, qos: QosKind<SubscriberQos>) -> DdsResult<()> {
         let qos = match qos {
             QosKind::Default => SubscriberQos::default(),
@@ -1573,12 +1573,12 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_default_subscriber_qos(&mut self) -> DdsResult<SubscriberQos> {
         Ok(self.domain_participant.default_subscriber_qos.clone())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn set_default_topic_qos(&mut self, qos: QosKind<TopicQos>) -> DdsResult<()> {
         let qos = match qos {
             QosKind::Default => TopicQos::default(),
@@ -1596,12 +1596,12 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_default_topic_qos(&self) -> DdsResult<TopicQos> {
         Ok(self.domain_participant.default_topic_qos.clone())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_discovered_participants(&mut self) -> DdsResult<Vec<InstanceHandle>> {
         Ok(self
             .domain_participant
@@ -1611,7 +1611,7 @@ where
             .collect())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_discovered_participant_data(
         &mut self,
         participant_handle: InstanceHandle,
@@ -1627,7 +1627,7 @@ where
         Ok(handle.dds_participant_data.clone())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_discovered_topics(&mut self) -> DdsResult<Vec<InstanceHandle>> {
         Ok(self
             .domain_participant
@@ -1637,7 +1637,7 @@ where
             .collect())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_discovered_topic_data(
         &mut self,
         topic_handle: InstanceHandle,
@@ -1654,12 +1654,12 @@ where
         Ok(handle.clone())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_current_time(&mut self) -> Time {
         self.clock_handle.now()
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn set_domain_participant_qos(
         &mut self,
         qos: QosKind<DomainParticipantQos>,
@@ -1677,12 +1677,12 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_domain_participant_qos(&mut self) -> DdsResult<DomainParticipantQos> {
         Ok(self.domain_participant.qos.clone())
     }
 
-    #[tracing::instrument(skip(self, dcps_listener))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, dcps_listener)))]
     pub fn set_domain_participant_listener(
         &mut self,
         dcps_listener: Option<DcpsDomainParticipantListener>,
@@ -1695,7 +1695,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn enable_domain_participant(
         &mut self,
         participant_address: MpscSender<DcpsDomainParticipantMail>,
@@ -1723,13 +1723,13 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn is_participant_empty(&mut self) -> bool {
         self.domain_participant.is_empty()
     }
 
     #[allow(clippy::too_many_arguments)]
-    #[tracing::instrument(skip(self, dcps_listener, domain_participant_address))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, dcps_listener, domain_participant_address)))]
     pub async fn create_data_reader(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -1900,7 +1900,7 @@ where
         Ok((data_reader_handle, reader_status_condition_address))
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn delete_data_reader(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -1929,7 +1929,7 @@ where
     }
 
     #[allow(clippy::type_complexity)]
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn lookup_data_reader(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -1969,7 +1969,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn set_default_data_reader_qos(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -1992,7 +1992,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_default_data_reader_qos(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -2009,7 +2009,7 @@ where
         Ok(subscriber.default_data_reader_qos.clone())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn set_subscriber_qos(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -2036,7 +2036,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_subscriber_qos(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -2053,7 +2053,7 @@ where
         Ok(subscriber.qos.clone())
     }
 
-    #[tracing::instrument(skip(self, listener_sender_task))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, listener_sender_task)))]
     pub fn set_subscriber_listener(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -2076,7 +2076,7 @@ where
     }
 
     #[allow(clippy::too_many_arguments)]
-    #[tracing::instrument(skip(self, dcps_listener, participant_address))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, dcps_listener, participant_address)))]
     pub async fn create_data_writer(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -2184,7 +2184,7 @@ where
         Ok((data_writer_handle, writer_status_condition_address))
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn delete_data_writer(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -2212,7 +2212,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_default_datawriter_qos(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -2228,7 +2228,7 @@ where
         Ok(publisher.default_datawriter_qos.clone())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn set_default_datawriter_qos(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -2252,7 +2252,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn set_publisher_qos(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -2275,7 +2275,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_publisher_qos(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -2292,7 +2292,7 @@ where
         Ok(publisher.qos.clone())
     }
 
-    #[tracing::instrument(skip(self, dcps_listener))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, dcps_listener)))]
     pub fn set_publisher_listener(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -2313,7 +2313,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn get_publication_matched_status(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -2346,7 +2346,7 @@ where
         Ok(status)
     }
 
-    #[tracing::instrument(skip(self, dcps_listener))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, dcps_listener)))]
     pub fn set_listener_data_writer(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -2377,7 +2377,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_data_writer_qos(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -2402,7 +2402,7 @@ where
         Ok(data_writer.qos.clone())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_matched_subscriptions(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -2430,7 +2430,7 @@ where
             .collect())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_matched_subscription_data(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -2460,7 +2460,7 @@ where
             .cloned()
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn unregister_instance(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -2494,7 +2494,7 @@ where
             .await
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn lookup_instance(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -2534,7 +2534,7 @@ where
             .then_some(instance_handle))
     }
 
-    #[tracing::instrument(skip(self, participant_address, reply_sender))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, participant_address, reply_sender)))]
     pub async fn write_w_timestamp(
         &mut self,
         participant_address: MpscSender<DcpsDomainParticipantMail>,
@@ -2842,7 +2842,7 @@ where
         reply_sender.send(Ok(()));
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn dispose_w_timestamp(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -2876,7 +2876,7 @@ where
             .await
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn get_offered_deadline_missed_status(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -2901,7 +2901,7 @@ where
         Ok(data_writer.get_offered_deadline_missed_status().await)
     }
 
-    #[tracing::instrument(skip(self, participant_address))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, participant_address)))]
     pub async fn enable_data_writer(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -2944,7 +2944,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn set_data_writer_qos(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -2985,7 +2985,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn are_all_changes_acknowledged(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -3011,7 +3011,7 @@ where
     }
 
     #[allow(clippy::too_many_arguments, clippy::type_complexity)]
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn read(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -3055,7 +3055,7 @@ where
     }
 
     #[allow(clippy::too_many_arguments, clippy::type_complexity)]
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn take(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -3093,7 +3093,7 @@ where
     }
 
     #[allow(clippy::too_many_arguments, clippy::type_complexity)]
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn read_next_instance(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -3131,7 +3131,7 @@ where
     }
 
     #[allow(clippy::too_many_arguments, clippy::type_complexity)]
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn take_next_instance(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -3168,7 +3168,7 @@ where
             .await
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn get_subscription_matched_status(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -3241,7 +3241,7 @@ where
         })
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_matched_publication_data(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -3275,7 +3275,7 @@ where
             .ok_or(DdsError::BadParameter)
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_matched_publications(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -3300,7 +3300,7 @@ where
         Ok(data_reader.get_matched_publications())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn set_data_reader_qos(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -3342,7 +3342,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_data_reader_qos(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -3367,7 +3367,7 @@ where
         Ok(data_reader.qos.clone())
     }
 
-    #[tracing::instrument(skip(self, dcps_listener))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, dcps_listener)))]
     pub fn set_data_reader_listener(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -3396,7 +3396,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn is_historical_data_received(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -3438,7 +3438,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self, participant_address))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, participant_address)))]
     pub async fn enable_data_reader(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -3481,7 +3481,7 @@ where
         Ok(())
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn announce_participant(
         &mut self,
         participant_address: MpscSender<DcpsDomainParticipantMail>,
@@ -3551,7 +3551,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn announce_deleted_participant(&mut self) {
         if self.domain_participant.enabled {
             let timestamp = self.get_current_time();
@@ -3587,7 +3587,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     async fn announce_data_writer(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -3675,7 +3675,7 @@ where
         .await;
     }
 
-    #[tracing::instrument(skip(self, data_writer))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, data_writer)))]
     async fn announce_deleted_data_writer(&mut self, data_writer: DataWriterEntity) {
         let timestamp = self.get_current_time();
         if let Some(dw) = self
@@ -3708,7 +3708,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     async fn announce_data_reader(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -3808,7 +3808,7 @@ where
         .await;
     }
 
-    #[tracing::instrument(skip(self, data_reader))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, data_reader)))]
     async fn announce_deleted_data_reader(&mut self, data_reader: DataReaderEntity) {
         let timestamp = self.get_current_time();
         if let Some(dw) = self
@@ -3840,7 +3840,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     async fn announce_topic(
         &mut self,
         topic_name: String,
@@ -3898,7 +3898,7 @@ where
         .await;
     }
 
-    #[tracing::instrument(skip(self, participant_address))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, participant_address)))]
     async fn add_discovered_reader(
         &mut self,
         discovered_reader_data: DiscoveredReaderData,
@@ -4318,7 +4318,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     async fn remove_discovered_reader(
         &mut self,
         subscription_handle: InstanceHandle,
@@ -4356,7 +4356,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self, participant_address))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, participant_address)))]
     async fn add_discovered_writer(
         &mut self,
         discovered_writer_data: DiscoveredWriterData,
@@ -4787,7 +4787,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     async fn remove_discovered_writer(
         &mut self,
         publication_handle: InstanceHandle,
@@ -4820,7 +4820,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn add_builtin_participants_detector_cache_change(
         &mut self,
         cache_change: CacheChange,
@@ -4874,7 +4874,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self, participant_address))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, participant_address)))]
     pub async fn add_builtin_publications_detector_cache_change(
         &mut self,
         cache_change: CacheChange,
@@ -4984,7 +4984,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self, participant_address))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, participant_address)))]
     pub async fn add_builtin_subscriptions_detector_cache_change(
         &mut self,
         cache_change: CacheChange,
@@ -5125,7 +5125,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn add_builtin_topics_detector_cache_change(&mut self, cache_change: CacheChange) {
         match cache_change.kind {
             ChangeKind::Alive => {
@@ -5182,7 +5182,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self, participant_address))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, participant_address)))]
     pub async fn add_cache_change(
         &mut self,
         participant_address: MpscSender<DcpsDomainParticipantMail>,
@@ -5548,7 +5548,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn remove_writer_change(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -5571,7 +5571,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self, participant_address))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, participant_address)))]
     pub async fn offered_deadline_missed(
         &mut self,
         publisher_handle: InstanceHandle,
@@ -5742,7 +5742,7 @@ where
             .await;
     }
 
-    #[tracing::instrument(skip(self, participant_address))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, participant_address)))]
     pub async fn requested_deadline_missed(
         &mut self,
         subscriber_handle: InstanceHandle,
@@ -5904,7 +5904,7 @@ where
             .await;
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     async fn add_discovered_participant(
         &mut self,
         discovered_participant_data: SpdpDiscoveredParticipantData,
@@ -5959,7 +5959,7 @@ where
     }
 
     /// Remove discovered [domain participant](SpdpDiscoveredParticipantData) with the speficied [handle](InstanceHandle).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     async fn remove_discovered_participant(&mut self, handle: InstanceHandle) {
         self.domain_participant
             .discovered_participant_list
@@ -6019,7 +6019,7 @@ where
         self.remove_matched_topics_announcer(prefix);
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     fn add_matched_publications_detector(
         &mut self,
         discovered_participant_data: &SpdpDiscoveredParticipantData,
@@ -6068,7 +6068,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     fn remove_matched_publications_detector(&mut self, prefix: GuidPrefix) {
         if let Some(dw) = self
             .domain_participant
@@ -6087,7 +6087,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     fn add_matched_publications_announcer(
         &mut self,
         discovered_participant_data: &SpdpDiscoveredParticipantData,
@@ -6135,7 +6135,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     fn remove_matched_publications_announcer(&mut self, prefix: GuidPrefix) {
         if let Some(dr) = self
             .domain_participant
@@ -6154,7 +6154,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     fn add_matched_subscriptions_detector(
         &mut self,
         discovered_participant_data: &SpdpDiscoveredParticipantData,
@@ -6203,7 +6203,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     fn remove_matched_subscriptions_detector(&mut self, prefix: GuidPrefix) {
         if let Some(dw) = self
             .domain_participant
@@ -6222,7 +6222,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     fn add_matched_subscriptions_announcer(
         &mut self,
         discovered_participant_data: &SpdpDiscoveredParticipantData,
@@ -6270,7 +6270,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     fn remove_matched_subscriptions_announcer(&mut self, prefix: GuidPrefix) {
         if let Some(dr) = self
             .domain_participant
@@ -6289,7 +6289,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     fn add_matched_topics_detector(
         &mut self,
         discovered_participant_data: &SpdpDiscoveredParticipantData,
@@ -6337,7 +6337,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     fn remove_matched_topics_detector(&mut self, prefix: GuidPrefix) {
         if let Some(dw) = self
             .domain_participant
@@ -6355,7 +6355,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     fn add_matched_topics_announcer(
         &mut self,
         discovered_participant_data: &SpdpDiscoveredParticipantData,
@@ -6402,7 +6402,7 @@ where
         }
     }
 
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     fn remove_matched_topics_announcer(&mut self, prefix: GuidPrefix) {
         if let Some(dr) = self
             .domain_participant
@@ -6637,7 +6637,7 @@ where
     }
 }
 
-#[tracing::instrument(skip(type_support))]
+#[cfg_attr(feature = "tracing", tracing::instrument(skip(type_support)))]
 fn get_topic_kind(type_support: &DynamicType) -> TopicKind {
     for index in 0..type_support.get_member_count() {
         if let Ok(m) = type_support.get_member_by_index(index) {
@@ -6651,7 +6651,7 @@ fn get_topic_kind(type_support: &DynamicType) -> TopicKind {
     TopicKind::NoKey
 }
 
-#[tracing::instrument]
+#[cfg_attr(feature = "tracing", tracing::instrument)]
 fn get_discovered_reader_incompatible_qos_policy_list(
     writer_qos: &DataWriterQos,
     discovered_reader_data: &SubscriptionBuiltinTopicData,
@@ -6706,7 +6706,7 @@ fn get_discovered_reader_incompatible_qos_policy_list(
     incompatible_qos_policy_list
 }
 
-#[tracing::instrument(skip(data_reader))]
+#[cfg_attr(feature = "tracing", tracing::instrument(skip(data_reader)))]
 fn get_discovered_writer_incompatible_qos_policy_list(
     data_reader: &DataReaderEntity,
     publication_builtin_topic_data: &PublicationBuiltinTopicData,

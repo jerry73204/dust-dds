@@ -47,7 +47,7 @@ impl From<TopicDescription> for TopicDescriptionAsync {
 /// This implementation block represents the TopicDescription operations for the [`Topic`].
 impl TopicDescription {
     /// This operation returns the [`DomainParticipant`] to which the [`Topic`] belongs.
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_participant(&self) -> DomainParticipant {
         match self {
             Self::Topic(t) => t.get_participant(),
@@ -56,7 +56,7 @@ impl TopicDescription {
     }
 
     /// The name of the type used to create the [`Topic`]
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_type_name(&self) -> String {
         match self {
             Self::Topic(t) => t.get_type_name(),
@@ -65,7 +65,7 @@ impl TopicDescription {
     }
 
     /// The name used to create the [`Topic`]
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_name(&self) -> String {
         match self {
             Self::Topic(t) => t.get_name(),

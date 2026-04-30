@@ -49,7 +49,7 @@ pub struct Sleep {
 }
 
 impl Sleep {
-    #[tracing::instrument]
+    #[cfg_attr(feature = "tracing", tracing::instrument)]
     pub fn is_elapsed(&self) -> bool {
         if let Some(d) = self.deadline {
             Instant::now() > d
@@ -58,7 +58,7 @@ impl Sleep {
         }
     }
 
-    #[tracing::instrument]
+    #[cfg_attr(feature = "tracing", tracing::instrument)]
     pub fn reset(&mut self) {
         self.deadline = Some(Instant::now() + self.duration);
     }
@@ -145,7 +145,7 @@ pub struct TimerHandle {
 }
 
 impl TimerHandle {
-    #[tracing::instrument]
+    #[cfg_attr(feature = "tracing", tracing::instrument)]
     pub fn sleep(&self, duration: Duration) -> Sleep {
         let mut inner_lock = self.inner.lock().expect("Mutex should not be poisoned");
         let id = inner_lock.sleep_task_id;
@@ -161,7 +161,7 @@ impl TimerHandle {
 }
 
 impl Timer for TimerHandle {
-    #[tracing::instrument]
+    #[cfg_attr(feature = "tracing", tracing::instrument)]
     fn delay(&mut self, duration: core::time::Duration) -> impl Future<Output = ()> + Send {
         self.sleep(duration)
     }

@@ -42,14 +42,20 @@ opentelemetry_sdk = "0.31.0"
 tracing-opentelemetry = "0.32.0"
 
 [features]
-default = ["dcps", "rtps", "rtps_udp_transport", "std"]
-dcps = ["xtypes", "transport", "dep:md5", "dep:tracing"]
+default = ["dcps", "rtps", "rtps_udp_transport", "std", "tracing"]
+dcps = ["xtypes", "transport", "dep:md5"]
 rtps_udp_transport = ["rtps", "dep:socket2", "dep:network-interface"]
 rtps = ["rtps_messages"]
 rtps_messages = ["transport"]
 transport = ["xtypes"]
 xtypes = []
 std = ["critical-section/std"]
+# Phase 97.3.esp32-qemu — `tracing` was previously a hard `dcps`
+# dep; on `riscv32imc` (ESP32-C3) `tracing-core` calls
+# `core::sync::atomic::*::compare_exchange/swap` directly, which the
+# RISC-V `imc` target lacks the `A` extension to emit. Detach
+# `tracing` so atomic-CAS-poor targets can drop it.
+tracing = ["dep:tracing"]
 
 [[bench]]
 name = "benchmark"

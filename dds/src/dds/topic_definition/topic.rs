@@ -43,7 +43,7 @@ impl From<Topic> for TopicAsync {
 
 impl Topic {
     /// This method allows the application to retrieve the [`InconsistentTopicStatus`] of the [`Topic`].
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_inconsistent_topic_status(&self) -> DdsResult<InconsistentTopicStatus> {
         block_on(self.topic_async.get_inconsistent_topic_status())
     }
@@ -52,19 +52,19 @@ impl Topic {
 /// This implementation block represents the TopicDescription operations for the [`Topic`].
 impl Topic {
     /// This operation returns the [`DomainParticipant`] to which the [`Topic`] belongs.
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_participant(&self) -> DomainParticipant {
         DomainParticipant::new(self.topic_async.get_participant())
     }
 
     /// The name of the type used to create the [`Topic`]
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_type_name(&self) -> String {
         self.topic_async.get_type_name()
     }
 
     /// The name used to create the [`Topic`]
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_name(&self) -> String {
         self.topic_async.get_name()
     }
@@ -84,13 +84,13 @@ impl Topic {
     /// The parameter `qos` can be set to [`QosKind::Default`] to indicate that the QoS of the Entity should be changed to match the current default QoS set in the Entity's factory.
     /// The operation [`Self::set_qos()`] cannot modify the immutable QoS so a successful return of the operation indicates that the mutable QoS for the Entity has been
     /// modified to match the current default for the Entity's factory.
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn set_qos(&self, qos: QosKind<TopicQos>) -> DdsResult<()> {
         block_on(self.topic_async.set_qos(qos))
     }
 
     /// This operation allows access to the existing set of [`TopicQos`] policies.
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_qos(&self) -> DdsResult<TopicQos> {
         block_on(self.topic_async.get_qos())
     }
@@ -98,7 +98,7 @@ impl Topic {
     /// This operation allows access to the [`StatusCondition`] associated with the Entity. The returned
     /// condition can then be added to a [`WaitSet`](crate::infrastructure::wait_set::WaitSet) so that the application can wait for specific status changes
     /// that affect the Entity.
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_statuscondition(&self) -> StatusCondition {
         StatusCondition::new(self.topic_async.get_statuscondition())
     }
@@ -109,7 +109,7 @@ impl Topic {
     /// list returned by the [`Self::get_status_changes`] operation will be empty.
     /// The list of statuses returned by the [`Self::get_status_changes`] operation refers to the status that are triggered on the Entity itself
     /// and does not include statuses that apply to contained entities.
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_status_changes(&self) -> DdsResult<Vec<StatusKind>> {
         block_on(self.topic_async.get_status_changes())
     }
@@ -134,13 +134,13 @@ impl Topic {
     /// automatically enable all entities created from the factory.
     /// The Listeners associated with an entity are not called until the entity is enabled. Conditions associated with an entity that is not
     /// enabled are *inactive,* that is, the operation [`StatusCondition::get_trigger_value()`] will always return `false`.
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn enable(&self) -> DdsResult<()> {
         block_on(self.topic_async.enable())
     }
 
     /// This operation returns the [`InstanceHandle`] that represents the Entity.
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_instance_handle(&self) -> InstanceHandle {
         block_on(self.topic_async.get_instance_handle())
     }
@@ -151,7 +151,7 @@ impl Topic {
     /// Only one listener can be attached to each Entity. If a listener was already set, the operation [`Self::set_listener()`] will replace it with the
     /// new one. Consequently if the value [`None`] is passed for the listener parameter to the [`Self::set_listener()`] operation, any existing listener
     /// will be removed.
-    #[tracing::instrument(skip(self, a_listener))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self, a_listener)))]
     pub fn set_listener(
         &self,
         a_listener: Option<impl TopicListener + Send + 'static>,
@@ -163,7 +163,7 @@ impl Topic {
 
 impl Topic {
     #[doc(hidden)]
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_type_support(&self) -> DdsResult<Arc<DynamicType>> {
         block_on(self.topic_async.get_type_support())
     }

@@ -23,7 +23,7 @@ impl Clone for TopicDescriptionAsync {
 
 impl TopicDescriptionAsync {
     /// Async version of [`get_participant`](crate::topic_definition::topic::Topic::get_participant).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_participant(&self) -> DomainParticipantAsync {
         match self {
             Self::Topic(t) => t.get_participant(),
@@ -32,7 +32,7 @@ impl TopicDescriptionAsync {
     }
 
     /// Async version of [`get_type_name`](crate::topic_definition::topic::Topic::get_type_name).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_type_name(&self) -> String {
         match self {
             Self::Topic(t) => t.get_type_name(),
@@ -41,7 +41,7 @@ impl TopicDescriptionAsync {
     }
 
     /// Async version of [`get_name`](crate::topic_definition::topic::Topic::get_name).
-    #[tracing::instrument(skip(self))]
+    #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn get_name(&self) -> String {
         match self {
             Self::Topic(t) => t.get_name(),
