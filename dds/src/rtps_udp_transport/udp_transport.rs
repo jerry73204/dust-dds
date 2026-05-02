@@ -64,10 +64,10 @@ fn get_multicast_socket(
         match interface_addr {
             Addr::V4(a) => {
                 let r = socket.join_multicast_v4(&addr, &a.ip);
-                if let Err(e) = r {
+                if let Err(_e) = r {
                     info!(
                         "Failed to join multicast group on address {} with error {}",
-                        a.ip, e
+                        a.ip, _e
                     )
                 }
             }

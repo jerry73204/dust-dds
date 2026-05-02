@@ -1,4 +1,3 @@
-use tracing::warn;
 
 use super::{condition::StatusConditionAsync, publisher::PublisherAsync};
 use crate::{
@@ -103,7 +102,7 @@ where
     pub async fn register_instance_w_timestamp(
         &self,
         _instance: &Foo,
-        timestamp: Time,
+        _timestamp: Time,
     ) -> DdsResult<Option<InstanceHandle>> {
         todo!()
     }
@@ -129,7 +128,7 @@ where
     pub async fn unregister_instance_w_timestamp(
         &self,
         instance: Foo,
-        handle: Option<InstanceHandle>,
+        _handle: Option<InstanceHandle>,
         timestamp: Time,
     ) -> DdsResult<()> {
         let (reply_sender, reply_receiver) = oneshot();
@@ -192,7 +191,7 @@ where
     pub async fn write_w_timestamp(
         &self,
         data: Foo,
-        handle: Option<InstanceHandle>,
+        _handle: Option<InstanceHandle>,
         timestamp: Time,
     ) -> DdsResult<()> {
         let (reply_sender, reply_receiver) = oneshot();
@@ -228,7 +227,7 @@ where
     pub async fn dispose_w_timestamp(
         &self,
         data: Foo,
-        handle: Option<InstanceHandle>,
+        _handle: Option<InstanceHandle>,
         timestamp: Time,
     ) -> DdsResult<()> {
         let (reply_sender, reply_receiver) = oneshot();

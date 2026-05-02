@@ -108,7 +108,7 @@ impl PublisherAsync {
     #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn lookup_datawriter<Foo>(
         &self,
-        topic_name: &str,
+        _topic_name: &str,
     ) -> DdsResult<Option<DataWriterAsync<Foo>>> {
         todo!()
     }

@@ -20,7 +20,7 @@ pub trait DomainParticipantListener {
     fn on_inconsistent_topic(
         &mut self,
         _the_topic: TopicAsync,
-        status: InconsistentTopicStatus,
+        _status: InconsistentTopicStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_inconsistent_topic");
         core::future::ready(())
@@ -30,7 +30,7 @@ pub trait DomainParticipantListener {
     fn on_liveliness_lost(
         &mut self,
         _the_writer: DataWriterAsync<()>,
-        status: LivelinessLostStatus,
+        _status: LivelinessLostStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_liveliness_lost");
         core::future::ready(())
@@ -40,7 +40,7 @@ pub trait DomainParticipantListener {
     fn on_offered_deadline_missed(
         &mut self,
         _the_writer: DataWriterAsync<()>,
-        status: OfferedDeadlineMissedStatus,
+        _status: OfferedDeadlineMissedStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_offered_deadline_missed");
         core::future::ready(())
@@ -50,7 +50,7 @@ pub trait DomainParticipantListener {
     fn on_offered_incompatible_qos(
         &mut self,
         _the_writer: DataWriterAsync<()>,
-        status: OfferedIncompatibleQosStatus,
+        _status: OfferedIncompatibleQosStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_offered_incompatible_qos");
         core::future::ready(())
@@ -60,7 +60,7 @@ pub trait DomainParticipantListener {
     fn on_sample_lost(
         &mut self,
         _the_reader: DataReaderAsync<()>,
-        status: SampleLostStatus,
+        _status: SampleLostStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_sample_lost");
         core::future::ready(())
@@ -79,7 +79,7 @@ pub trait DomainParticipantListener {
     fn on_sample_rejected(
         &mut self,
         _the_reader: DataReaderAsync<()>,
-        status: SampleRejectedStatus,
+        _status: SampleRejectedStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_sample_rejected");
         core::future::ready(())
@@ -89,7 +89,7 @@ pub trait DomainParticipantListener {
     fn on_liveliness_changed(
         &mut self,
         _the_reader: DataReaderAsync<()>,
-        status: LivelinessChangedStatus,
+        _status: LivelinessChangedStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_liveliness_changed");
         core::future::ready(())
@@ -99,7 +99,7 @@ pub trait DomainParticipantListener {
     fn on_requested_deadline_missed(
         &mut self,
         _the_reader: DataReaderAsync<()>,
-        status: RequestedDeadlineMissedStatus,
+        _status: RequestedDeadlineMissedStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_requested_deadline_missed");
         core::future::ready(())
@@ -109,7 +109,7 @@ pub trait DomainParticipantListener {
     fn on_requested_incompatible_qos(
         &mut self,
         _the_reader: DataReaderAsync<()>,
-        status: RequestedIncompatibleQosStatus,
+        _status: RequestedIncompatibleQosStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_requested_incompatible_qos");
         core::future::ready(())
@@ -119,7 +119,7 @@ pub trait DomainParticipantListener {
     fn on_publication_matched(
         &mut self,
         _the_writer: DataWriterAsync<()>,
-        status: PublicationMatchedStatus,
+        _status: PublicationMatchedStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_publication_matched");
         core::future::ready(())
@@ -129,7 +129,7 @@ pub trait DomainParticipantListener {
     fn on_subscription_matched(
         &mut self,
         _the_reader: DataReaderAsync<()>,
-        status: SubscriptionMatchedStatus,
+        _status: SubscriptionMatchedStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_subscription_matched");
         core::future::ready(())

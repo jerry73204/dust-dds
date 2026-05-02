@@ -1297,7 +1297,7 @@ where
     #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub async fn create_content_filtered_topic(
         &mut self,
-        participant_handle: InstanceHandle,
+        _participant_handle: InstanceHandle,
         name: String,
         related_topic_name: String,
         filter_expression: String,
@@ -1350,8 +1350,8 @@ where
     #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
     pub fn delete_content_filtered_topic(
         &mut self,
-        participant_handle: InstanceHandle,
-        name: String,
+        _participant_handle: InstanceHandle,
+        _name: String,
     ) -> DdsResult<()> {
         Ok(())
     }

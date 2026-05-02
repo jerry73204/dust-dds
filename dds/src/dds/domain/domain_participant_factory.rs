@@ -12,6 +12,7 @@ use crate::{
     runtime::DdsRuntime,
     std_runtime::executor::block_on,
 };
+#[cfg(feature = "tracing")]
 use tracing::warn;
 
 /// The sole purpose of this class is to allow the creation and destruction of [`DomainParticipant`] objects.

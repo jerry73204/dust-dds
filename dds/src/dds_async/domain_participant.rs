@@ -389,7 +389,7 @@ impl DomainParticipantAsync {
 
     /// Async version of [`ignore_topic`](crate::domain::domain_participant::DomainParticipant::ignore_topic).
     #[cfg_attr(feature = "tracing", tracing::instrument(skip(self)))]
-    pub async fn ignore_topic(&self, handle: InstanceHandle) -> DdsResult<()> {
+    pub async fn ignore_topic(&self, _handle: InstanceHandle) -> DdsResult<()> {
         todo!()
     }
 
