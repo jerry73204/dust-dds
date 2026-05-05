@@ -24,7 +24,7 @@ pub trait DataReaderListener<Foo>: 'static {
     fn on_sample_rejected(
         &mut self,
         _the_reader: DataReaderAsync<Foo>,
-        _status: SampleRejectedStatus,
+        status: SampleRejectedStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_sample_rejected");
         core::future::ready(())
@@ -33,7 +33,7 @@ pub trait DataReaderListener<Foo>: 'static {
     fn on_liveliness_changed(
         &mut self,
         _the_reader: DataReaderAsync<Foo>,
-        _status: LivelinessChangedStatus,
+        status: LivelinessChangedStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_liveliness_changed");
         core::future::ready(())
@@ -43,7 +43,7 @@ pub trait DataReaderListener<Foo>: 'static {
     fn on_requested_deadline_missed(
         &mut self,
         _the_reader: DataReaderAsync<Foo>,
-        _status: RequestedDeadlineMissedStatus,
+        status: RequestedDeadlineMissedStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_requested_deadline_missed");
         core::future::ready(())
@@ -53,7 +53,7 @@ pub trait DataReaderListener<Foo>: 'static {
     fn on_requested_incompatible_qos(
         &mut self,
         _the_reader: DataReaderAsync<Foo>,
-        _status: RequestedIncompatibleQosStatus,
+        status: RequestedIncompatibleQosStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_requested_incompatible_qos");
         core::future::ready(())
@@ -63,7 +63,7 @@ pub trait DataReaderListener<Foo>: 'static {
     fn on_subscription_matched(
         &mut self,
         _the_reader: DataReaderAsync<Foo>,
-        _status: SubscriptionMatchedStatus,
+        status: SubscriptionMatchedStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_subscription_matched");
         core::future::ready(())
@@ -73,7 +73,7 @@ pub trait DataReaderListener<Foo>: 'static {
     fn on_sample_lost(
         &mut self,
         _the_reader: DataReaderAsync<Foo>,
-        _status: SampleLostStatus,
+        status: SampleLostStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_sample_lost");
         core::future::ready(())

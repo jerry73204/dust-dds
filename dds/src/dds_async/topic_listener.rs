@@ -9,7 +9,7 @@ pub trait TopicListener {
     fn on_inconsistent_topic(
         &mut self,
         _the_topic: TopicAsync,
-        _status: InconsistentTopicStatus,
+        status: InconsistentTopicStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_inconsistent_topic");
         core::future::ready(())

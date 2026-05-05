@@ -15,7 +15,7 @@ pub trait DataWriterListener<Foo>: 'static {
     fn on_liveliness_lost(
         &mut self,
         _the_writer: DataWriterAsync<Foo>,
-        _status: LivelinessLostStatus,
+        status: LivelinessLostStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_liveliness_lost");
         core::future::ready(())
@@ -25,7 +25,7 @@ pub trait DataWriterListener<Foo>: 'static {
     fn on_offered_deadline_missed(
         &mut self,
         _the_writer: DataWriterAsync<Foo>,
-        _status: OfferedDeadlineMissedStatus,
+        status: OfferedDeadlineMissedStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_offered_deadline_missed");
         core::future::ready(())
@@ -35,7 +35,7 @@ pub trait DataWriterListener<Foo>: 'static {
     fn on_offered_incompatible_qos(
         &mut self,
         _the_writer: DataWriterAsync<Foo>,
-        _status: OfferedIncompatibleQosStatus,
+        status: OfferedIncompatibleQosStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_offered_incompatible_qos");
         core::future::ready(())
@@ -45,7 +45,7 @@ pub trait DataWriterListener<Foo>: 'static {
     fn on_publication_matched(
         &mut self,
         _the_writer: DataWriterAsync<Foo>,
-        _status: PublicationMatchedStatus,
+        status: PublicationMatchedStatus,
     ) -> impl Future<Output = ()> + Send {
         info!(?status, "on_publication_matched");
         core::future::ready(())
