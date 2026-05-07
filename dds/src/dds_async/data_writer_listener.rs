@@ -1,3 +1,4 @@
+#![cfg_attr(not(feature = "tracing"), allow(unused_variables))]
 use tracing::info;
 
 use crate::{
