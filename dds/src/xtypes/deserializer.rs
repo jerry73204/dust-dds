@@ -255,8 +255,8 @@ trait XTypesDeserialize {
                 }
             }
             //     TypeKind::UNION => todo!(),
-            kind => {
-                debug!("Expected structure, enum or union. Got kind {kind:?} ");
+            _kind => {
+                debug!("Expected structure, enum or union. Got kind {_kind:?} ");
                 Err(XTypesError::InvalidType)
             }
         }
